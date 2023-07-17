@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 interface UserInputProps {
-  onAddStock: (stock: string) => void
-  onRemoveStock: (stock: string) => void
-  onToggleAdvancedView: () => void
-  onFetchStockData: () => void
-  stockList: string[]
+  onAddStock: (stock: string) => void;
+  onRemoveStock: (stock: string) => void;
+  onToggleAdvancedView: () => void;
+  onFetchStockData: () => void;
+  stockList: string[];
 }
 
 function UserInput({
@@ -15,11 +15,11 @@ function UserInput({
   onFetchStockData,
   stockList,
 }: UserInputProps) {
-  const [stock, setStock] = useState('');
+  const [stock, setStock] = useState("");
 
   const handleAddStock = () => {
     onAddStock(stock);
-    setStock('');
+    setStock("");
   };
 
   const handleRemoveButtonClick = (stock: string) => {
@@ -58,4 +58,4 @@ function UserInput({
   );
 }
 
-export default UserInput
+export default UserInput;

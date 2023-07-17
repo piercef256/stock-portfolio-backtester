@@ -1,28 +1,30 @@
-'use client'
-
-import UserInput from "../components/UserInput"
-import StockList from "../components/StockList"
-import StockChart from "../components/StockChart"
+"use client";
+import UserInput from "../components/UserInput";
+import StockList from "../components/StockList";
+import StockChart from "../components/StockChart";
 
 import { useState } from "react";
 
 interface UserConfig {
-  advancedView: boolean
+  advancedView: boolean;
+}
+
+interface StockData {
+  [symbol: string]: {
+    [date: string]: number;
+  };
 }
 
 export default function Home() {
-  const [stockList, setStockList] = useState<string[]>(["AMZN"])
+  const [stockList, setStockList] = useState<string[]>(["AMZN"]);
   const [isLoading, setIsLoading] = useState(true);
+  const [startDate, setStartDate] = useState("2022-01-01");
+  const [endDate, setEndDate] = useState("2022-12-31");
 
   const [userConfig, setUserConfig] = useState<UserConfig>({
     advancedView: false,
-  })
-  // const [stockData, setStockData] = useState<StockData | null>(null);
-  const [stockData, setStockData] = useState<StockData[] | null>(null);
-
-  const stockDataApiKey = process.env.NEXT_PUBLIC_STOCK_DATA_API_KEY;
-
-
+  });
+  const [stockData, setStockData] = useState<StockData | null>(null);
 
   const handleAddStock = (stock: string) => {
     setStockList((prevStockList) => {
@@ -34,89 +36,72 @@ export default function Home() {
     });
   };
 
-
   const handleRemoveStock = (stock: string) => {
     setStockList((prevStockList) =>
       prevStockList.filter((item) => item !== stock)
-    )
-  }
+    );
+  };
 
   const handleToggleAdvancedView = () => {
     setUserConfig((prevUserConfig) => ({
       ...prevUserConfig,
       advancedView: !prevUserConfig.advancedView,
-    }))
-  }
+    }));
+  };
 
   async function handleFetchStockData() {
     setIsLoading(true);
-    const fetchedStockData = await fetchStockData(stockList);
-    // setStockData(JSON.parse(fetchedStockData));
+    const fetchedStockData = await fetchStockData(
+      stockList,
+      startDate,
+      endDate
+    );
     setStockData(fetchedStockData);
     setIsLoading(false);
   }
 
-  interface TimeSeriesData {
-    [date: string]: {
-      "1. open": string;
-      "2. high": string;
-      "3. low": string;
-      "4. close": string;
-      "5. adjusted close": string;
-      "6. volume": string;
-      "7. dividend amount": string;
-      "8. split coefficient": string;
-    };
-  }
-
-  interface StockData {
-    'Meta Data': {
-      [key: string]: string;
-    };
-    'Time Series (Daily)': TimeSeriesData;
-  }
-
-  async function fetchStockData(stockList: string[]): Promise<StockData[]> {
-
+  async function fetchStockData(
+    stockList: string[],
+    startDate: string,
+    endDate: string
+  ): Promise<StockData> {
     const responses = await Promise.all(
       stockList.map((stock) =>
         fetch(
-          `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${stock}&outputsize=full&apikey=${stockDataApiKey}`
+          `http://localhost:5000/stock?symbol=${stock}&start=${startDate}&end=${endDate}`
         )
       )
     );
-    const data = (await Promise.all(responses.map((response) => response.json()))) as (
-      | StockData
-      | { 'Error Message': string }
-      | { 'Note': string }
-    )[];
-    const filteredData = data.map((stockData) => {
-      if ('Error Message' in stockData) {
-        throw new Error(stockData['Error Message']);
-      }
-      if ('Note' in stockData) {
-        throw new Error(stockData['Note']);
-      }
-      if (!('Time Series (Daily)' in stockData)) {
-        throw new Error('Time series data not found');
-      }
-      const timeSeries = stockData['Time Series (Daily)'];
-      const filteredTimeSeries = Object.keys(timeSeries)
-        .filter((date) => date.startsWith('2019') || date.startsWith('2020') || date.startsWith('2021') || date.startsWith('2022') || date.startsWith('2023'))
-        .reduce((obj, key) => {
-          obj[key] = timeSeries[key];
-          return obj;
-        }, {} as TimeSeriesData);
-      return { ...stockData, 'Time Series (Daily)': filteredTimeSeries };
+    const data = (await Promise.all(
+      responses.map((response) => response.json())
+    )) as { [date: string]: number }[];
+
+    const result: StockData = {};
+    stockList.forEach((symbol, index) => {
+      result[symbol] = data[index];
     });
-    // console.log(JSON.stringify(filteredData))
-    // return JSON.stringify(filteredData);
-    return filteredData
+
+    return result;
   }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div><h1>Stock Portfolio Backtester</h1>
+      <div>
+        <h1>Stock Portfolio Backtester</h1>
+        <label htmlFor="start-date">Start Date:</label>
+        <input
+          id="start-date"
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+        />
+        <label htmlFor="end-date">End Date:</label>
+        <input
+          id="end-date"
+          type="date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+        />
         <UserInput
           onAddStock={handleAddStock}
           onRemoveStock={handleRemoveStock}
@@ -125,10 +110,16 @@ export default function Home() {
           stockList={stockList}
         />
         <StockList />
-        {stockData && !isLoading ? <StockChart data={stockData} /> : <p>Chart...</p>}
-        {/* <StockChart data={stockData} isLoading={isLoading} /> */}
+        {stockData && !isLoading ? (
+          <StockChart data={stockData} />
+        ) : (
+          <p>Stoch chart:</p>
+        )}
       </div>
     </main>
-  )
+  );
 }
 
+// 1) Add comments
+// 2) Make symbols captureRejectionSymbol
+// 3) Add the CHS from the assignemnt i typed up
