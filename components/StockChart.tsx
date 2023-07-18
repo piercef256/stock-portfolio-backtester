@@ -24,22 +24,27 @@ function StockChart({ data }: StockDataProps) {
   });
 
   return (
-    <LineChart width={600} height={300} data={chartData}>
-      <XAxis dataKey="date" />
-      <YAxis />
-      <CartesianGrid strokeDasharray="3 3" />
-      <Tooltip />
-      <Legend />
-      {symbols.map((symbol, index) => (
-        <Line
-          key={symbol}
-          type="monotone"
-          dataKey={symbol}
-          stroke={`#${Math.floor(Math.random() * 16777215).toString(16)}`}
-          dot={false}
-        />
-      ))}
-    </LineChart>
+    <>
+      <p>
+        Hover your mouse over the graph to see the price on a particular date.
+      </p>
+      <LineChart width={600} height={300} data={chartData}>
+        <XAxis dataKey="date" />
+        <YAxis />
+        <CartesianGrid strokeDasharray="3 3" />
+        <Tooltip />
+        <Legend />
+        {symbols.map((symbol, index) => (
+          <Line
+            key={symbol}
+            type="monotone"
+            dataKey={symbol}
+            stroke={`#${Math.floor(Math.random() * 16777215).toString(16)}`}
+            dot={false}
+          />
+        ))}
+      </LineChart>
+    </>
   );
 }
 
