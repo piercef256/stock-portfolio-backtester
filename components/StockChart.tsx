@@ -8,6 +8,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import * as d3 from "d3-scale-chromatic";
 
 interface StockDataProps {
   data: { [symbol: string]: { [date: string]: number } };
@@ -23,23 +24,30 @@ function StockChart({ data }: StockDataProps) {
     return obj;
   });
 
+  const colors = d3.schemeCategory10;
+
   return (
-    <LineChart width={600} height={300} data={chartData}>
-      <XAxis dataKey="date" />
-      <YAxis />
-      <CartesianGrid strokeDasharray="3 3" />
-      <Tooltip />
-      <Legend />
-      {symbols.map((symbol, index) => (
-        <Line
-          key={symbol}
-          type="monotone"
-          dataKey={symbol}
-          stroke={`#${Math.floor(Math.random() * 16777215).toString(16)}`}
-          dot={false}
-        />
-      ))}
-    </LineChart>
+    <>
+      <p>
+        Hover your mouse over the graph to see the price on a particular date.
+      </p>
+      <LineChart width={600} height={300} data={chartData}>
+        <XAxis dataKey="date" />
+        <YAxis />
+        <CartesianGrid strokeDasharray="3 3" />
+        <Tooltip />
+        <Legend />
+        {symbols.map((symbol, index) => (
+          <Line
+            key={symbol}
+            type="monotone"
+            dataKey={symbol}
+            stroke={colors[index % colors.length]}
+            dot={false}
+          />
+        ))}
+      </LineChart>
+    </>
   );
 }
 
