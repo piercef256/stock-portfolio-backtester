@@ -35,3 +35,5 @@ yarn-error.log*
 next-env.d.ts
 app.py
 .gitignore
+app2.py
+encrypt.py

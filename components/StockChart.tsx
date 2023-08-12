@@ -8,6 +8,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import * as d3 from "d3-scale-chromatic";
 
 interface StockDataProps {
   data: { [symbol: string]: { [date: string]: number } };
@@ -22,6 +23,8 @@ function StockChart({ data }: StockDataProps) {
     });
     return obj;
   });
+
+  const colors = d3.schemeCategory10;
 
   return (
     <>
@@ -39,7 +42,7 @@ function StockChart({ data }: StockDataProps) {
             key={symbol}
             type="monotone"
             dataKey={symbol}
-            stroke={`#${Math.floor(Math.random() * 16777215).toString(16)}`}
+            stroke={colors[index % colors.length]}
             dot={false}
           />
         ))}

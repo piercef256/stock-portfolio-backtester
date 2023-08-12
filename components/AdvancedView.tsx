@@ -1,40 +1,62 @@
 import React from "react";
 
-interface StockDataProps {
-  data: { [symbol: string]: { [date: string]: number } };
+interface RatiosResponseBody {
+  sharpe_ratio: number;
+  treynor_ratio: number;
+  calmar_ratio: number;
 }
 
-function AdvancedView({ data }: StockDataProps) {
-  const riskFreeRate = 0.02;
+interface StockDataProps {
+  data: { [symbol: string]: { [date: string]: number } };
+  extraStockData: { [symbol: string]: { max_drawdown: number; beta: number } };
+  stockRatios: { symbol: string; data: RatiosResponseBody }[];
+}
 
+function AdvancedView({ data, extraStockData, stockRatios }: StockDataProps) {
   // Calculate Sharpe ratio for each stock
-  const sharpeRatios: { [symbol: string]: number } = {};
-  Object.keys(data).forEach((symbol) => {
-    const prices = Object.values(data[symbol]);
-    const dailyReturns = prices
-      .slice(1)
-      .map((price, i) => (price - prices[i]) / prices[i]);
-    const meanDailyReturn =
-      dailyReturns.reduce((a, b) => a + b) / dailyReturns.length;
-    const stdDevDailyReturn = Math.sqrt(
-      dailyReturns
-        .map((x) => Math.pow(x - meanDailyReturn, 2))
-        .reduce((a, b) => a + b) / dailyReturns.length
-    );
-    sharpeRatios[symbol] = (meanDailyReturn - riskFreeRate) / stdDevDailyReturn;
-  });
+  console.log(extraStockData);
+  console.log(data);
+  console.log(stockRatios);
+  //   [
+  //     {
+  //         "symbol": "AMZN",
+  //         "data": {
+  //             "calmar_ratio": -0.004480417722775199,
+  //             "sharpe_ratio": -0.07625842173767448,
+  //             "treynor_ratio": -1.8519299885022409
+  //         }
+  //     },
+  //     {
+  //         "symbol": "SPY",
+  //         "data": {
+  //             "calmar_ratio": -0.002892384115201195,
+  //             "sharpe_ratio": -0.051446305929940886,
+  //             "treynor_ratio": -0.004302048558889198
+  //         }
+  //     }
+  // ]
 
   return (
-    <>
-      <h3>Sharpe Ratios</h3>
-      <ul>
-        {Object.entries(sharpeRatios).map(([symbol, sharpeRatio]) => (
-          <li key={symbol}>
-            {symbol}: {sharpeRatio.toFixed(2)}
-          </li>
+    <table>
+      <thead>
+        <tr>
+          <th>Symbol</th>
+          <th>Calmar Ratio</th>
+          <th>Sharpe Ratio</th>
+          <th>Treynor Ratio</th>
+        </tr>
+      </thead>
+      <tbody>
+        {stockRatios.map((item) => (
+          <tr key={item.symbol}>
+            <td>{item.symbol}</td>
+            <td>{item.data.calmar_ratio.toFixed(6)}</td>
+            <td>{item.data.sharpe_ratio.toFixed(6)}</td>
+            <td>{item.data.treynor_ratio.toFixed(6)}</td>
+          </tr>
         ))}
-      </ul>
-    </>
+      </tbody>
+    </table>
   );
 }
 

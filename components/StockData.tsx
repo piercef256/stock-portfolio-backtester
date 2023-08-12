@@ -17,7 +17,7 @@ export default function StockData({ symbol, start, end }: StockDataProps) {
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get<StockData>(
-        "http://localhost:5000/stock",
+        "http://localhost:8000/stock",
         {
           params: { symbol, start, end },
         }
