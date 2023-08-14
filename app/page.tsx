@@ -151,7 +151,7 @@ export default function Home() {
     returnsData: ReturnsData
   ): Promise<{ symbol: string; data: RatiosResponseBody }[]> {
     // Extract the data from extraStockData and returnsData
-    const risk_free_rate = 0.02 / 255; /* risk free rate */
+    const risk_free_rate = 0;
 
     // Call the API for each stock in extraStockData and save the responses
     const res = await Promise.all(
@@ -163,7 +163,7 @@ export default function Home() {
           },
           body: JSON.stringify({
             returns: Object.values(extraStockData[symbol].daily_returns),
-            risk_free_rate,
+            risk_free_rate: risk_free_rate,
             beta: stock.beta,
             max_drawdown: stock.max_drawdown,
           } as RatiosRequestBody),
@@ -254,14 +254,15 @@ export default function Home() {
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
         />
-        <UserInput
-          onAddStock={handleAddStock}
-          onRemoveStock={handleRemoveStock}
-          onToggleAdvancedView={handleToggleAdvancedView}
-          onFetchStockData={handleFetchStockData}
-          stockList={stockList}
-        />
         <div>
+          <UserInput
+            onAddStock={handleAddStock}
+            onRemoveStock={handleRemoveStock}
+            onToggleAdvancedView={handleToggleAdvancedView}
+            onFetchStockData={handleFetchStockData}
+            stockList={stockList}
+          />
+
           <button onClick={handleUndo}>Undo</button>
           <button onClick={handleRedo}>Redo</button>
           <button
