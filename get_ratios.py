@@ -54,7 +54,6 @@ class StockRatiosCalculator:
 @app.route("/get_ratios", methods=["POST"])
 def get_ratios():
     data = request.get_json()
-    print(data)
 
     returns = data["returns"]
     risk_free_rate = data["risk_free_rate"]
