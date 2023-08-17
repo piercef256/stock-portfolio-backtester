@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Data from "./Data";
 
 interface StockDataProps {
   symbol: string;
@@ -8,7 +9,7 @@ interface StockDataProps {
 }
 
 interface StockData {
-  [date: string]: number;
+  close_prices: { [date: string]: number };
 }
 
 export default function StockData({ symbol, start, end }: StockDataProps) {
@@ -17,12 +18,10 @@ export default function StockData({ symbol, start, end }: StockDataProps) {
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get<StockData>(
-        "http://localhost:8000/stock",
-        {
-          params: { symbol, start, end },
-        }
+        `http://localhost:8000/stock?symbol=${symbol}&start=${start}&end=${end}`
       );
       setData(response.data);
+      console.log("DEVMODE:", response.data["close_prices"]);
     };
     fetchData();
   }, [symbol, start, end]);
@@ -31,14 +30,7 @@ export default function StockData({ symbol, start, end }: StockDataProps) {
 
   return (
     <div>
-      <h1>{symbol} Stock Data</h1>
-      <ul>
-        {Object.entries(data).map(([date, price]) => (
-          <li key={date}>
-            {date}: {price}
-          </li>
-        ))}
-      </ul>
+      <Data data={data["close_prices"]} />
     </div>
   );
 }

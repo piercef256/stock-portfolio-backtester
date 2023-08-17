@@ -43,8 +43,7 @@ export default function Home() {
 
   const handleAddStock = (stock: string) => {
     if (stock === "") {
-      // Handle empty string input
-      alert("Error: stock cannot be an empty string");
+      handleEmptyString();
       return;
     }
     if (stock == "devmode on") {
@@ -56,17 +55,27 @@ export default function Home() {
       return;
     }
     stock = stock.toUpperCase();
+    updateStockList(stock);
+  };
+
+  const handleEmptyString = () => {
+    alert("Error: stock cannot be an empty string");
+  };
+
+  const updateStockList = (stock: string) => {
     setStockList((prevStockList) => {
       if (!prevStockList.includes(stock)) {
-        // Add current state to undo list
-        setUndoList((prevUndoList) => [...prevUndoList, prevStockList]);
-        // Clear redo list
+        updateUndoList(prevStockList);
         setRedoList([]);
         return [...prevStockList, stock];
       } else {
         return prevStockList;
       }
     });
+  };
+
+  const updateUndoList = (prevStockList: string[]) => {
+    setUndoList((prevUndoList) => [...prevUndoList, prevStockList]);
   };
 
   const handleRemoveStock = (stock: string) => {
@@ -150,30 +159,39 @@ export default function Home() {
     extraStockData: ExtraStockData,
     returnsData: ReturnsData
   ): Promise<{ symbol: string; data: RatiosResponseBody }[]> {
-    // Extract the data from extraStockData and returnsData
     const risk_free_rate = 0;
+    const res = await fetchRatiosResponses(extraStockData, risk_free_rate);
+    return res;
+  }
 
-    // Call the API for each stock in extraStockData and save the responses
-    const res = await Promise.all(
-      Object.entries(extraStockData).map(async ([symbol, stock]) => {
-        const response = await fetch("http://localhost:5001/get_ratios", {
+  // async function fetchRatiosResponses(extraStockData: ExtraStockData, risk_free_rate: number) {
+  //   return await Promise.all(Object.entries(extraStockData).map(async ([s, c]) => {
+  //     const r = await fetch("http://localhost:5001/get_ratios", {
+  //       method: "POST", headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ returns: Object.values(c.daily_returns), risk_free_rate, beta: c.beta, max_drawdown: c.max_drawdown } as RatiosRequestBody)
+  //     }); return { symbol: s, data: (await r.json()) as RatiosResponseBody };
+  //   }));
+  // }
+
+  async function fetchRatiosResponses(
+    extraStockData: ExtraStockData,
+    risk_free_rate: number
+  ) {
+    return await Promise.all(
+      Object.entries(extraStockData).map(async ([s, c]) => {
+        const r = await fetch("http://localhost:5001/get_ratios", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            returns: Object.values(extraStockData[symbol].daily_returns),
-            risk_free_rate: risk_free_rate,
-            beta: stock.beta,
-            max_drawdown: stock.max_drawdown,
+            returns: Object.values(c.daily_returns),
+            risk_free_rate,
+            beta: c.beta,
+            max_drawdown: c.max_drawdown,
           } as RatiosRequestBody),
         });
-        return { symbol, data: (await response.json()) as RatiosResponseBody };
+        return { symbol: s, data: (await r.json()) as RatiosResponseBody };
       })
     );
-
-    // Return the data from the API
-    return res;
   }
 
   async function handleFetchStockData() {
@@ -198,29 +216,56 @@ export default function Home() {
     startDate: string,
     endDate: string
   ) {
-    const responses = await Promise.all(
+    const responses = await fetchResponses(stockList, startDate, endDate);
+    const data = await getData(responses);
+    const { stockDataResult, extraStockDataResult } = processData(
+      stockList,
+      data
+    );
+    return { stockData: stockDataResult, extraStockData: extraStockDataResult };
+  }
+
+  async function fetchResponses(
+    stockList: string[],
+    startDate: string,
+    endDate: string
+  ) {
+    return await Promise.all(
       stockList.map((stock) =>
         fetch(
           `http://localhost:8000/stock?symbol=${stock}&start=${startDate}&end=${endDate}`
         )
       )
     );
-    const data = (await Promise.all(
+  }
+
+  async function getData(responses: Response[]) {
+    return (await Promise.all(
       responses.map((response) => response.json())
     )) as {
       close_prices: { [date: string]: number };
-      daily_returns: { [date: string]: number }; // Include daily_returns in the response
+      daily_returns: { [date: string]: number };
       max_drawdown: number;
       beta: number;
     }[];
+  }
 
+  function processData(
+    stockList: string[],
+    data: {
+      close_prices: { [date: string]: number };
+      daily_returns: { [date: string]: number };
+      max_drawdown: number;
+      beta: number;
+    }[]
+  ) {
     const stockDataResult: { [symbol: string]: { [date: string]: number } } =
       {};
     const extraStockDataResult: {
       [symbol: string]: {
         max_drawdown: number;
         beta: number;
-        daily_returns: { [date: string]: number }; // Include daily_returns in the result
+        daily_returns: { [date: string]: number };
       };
     } = {};
 
@@ -229,11 +274,11 @@ export default function Home() {
       extraStockDataResult[symbol] = {
         max_drawdown: data[index].max_drawdown,
         beta: data[index].beta,
-        daily_returns: data[index].daily_returns, // Include daily_returns in the result
+        daily_returns: data[index].daily_returns,
       };
     });
 
-    return { stockData: stockDataResult, extraStockData: extraStockDataResult };
+    return { stockDataResult, extraStockDataResult };
   }
 
   return (
