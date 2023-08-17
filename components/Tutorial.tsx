@@ -28,8 +28,8 @@ function Tutorial({ onDone }: TutorialProps) {
         <div>
           <p>
             Step 2: When you have added the stocks that you want to analyze,
-            click the &quot;Fetch stock data&quot; button, and dive into the
-            stock data!
+            click the &quot;Show Graph&quot; button, and dive into the stock
+            data!
           </p>
           <button onClick={onDone}>Done</button>
         </div>

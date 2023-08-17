@@ -60,7 +60,7 @@ function UserInput({
         placeholder="Enter stock symbol"
       />
       <button onClick={handleAddStock}>Add stock</button>
-      <button onClick={handleFetchButtonClick}>Fetch stock data</button>
+      <button onClick={handleFetchButtonClick}>Show Graph</button>
       <label style={{ position: "relative" }}>
         <input type="checkbox" onChange={handleToggleAdvancedViewClick} />
         Advanced view
