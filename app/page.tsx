@@ -2,7 +2,7 @@
 import UserInput from "../components/UserInput";
 import StockChart from "../components/StockChart";
 import AdvancedView from "../components/AdvancedView";
-import StockData from "../components/StockData";
+import StockData from "../components/Devmode";
 
 import { useState } from "react";
 
