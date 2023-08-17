@@ -14,9 +14,8 @@ interface StockDataProps {
 
 function AdvancedView({ data, extraStockData, stockRatios }: StockDataProps) {
   // Calculate Sharpe ratio for each stock
-  console.log(extraStockData);
-  console.log(data);
-  console.log(stockRatios);
+
+  // Data format for each stock
   //   [
   //     {
   //         "symbol": "AMZN",
