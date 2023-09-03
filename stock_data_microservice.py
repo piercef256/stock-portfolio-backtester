@@ -56,7 +56,7 @@ class BetaCalculator:
         beta = covariance / variance
         return beta
 
-class ExtraVals:
+class AdvancedViewValues:
     @staticmethod
     def get_extra_vals(stock_data, market_data):
         daily_returns = ReturnsCalculator.calculate_daily_returns(stock_data)
@@ -77,7 +77,7 @@ def get_stock_data_route():
 
     market_data = StockDataProvider.get_stock_data("^GSPC", start, end)
     
-    extra_vals = ExtraVals.get_extra_vals(stock_data, market_data)
+    extra_vals = AdvancedViewValues.get_extra_vals(stock_data, market_data)
 
 
     return jsonify(
