@@ -66,6 +66,7 @@ python get_ratios.py
 ```
 **UML Sequence Diagram:**
 ![Ratios Calculation Service UML Sequence Diagram](documentation/get_ratios.png)
+
 **UML Class Diagram:**
 ![Ratios Calculation UML Class Diagram](documentation/uml_class_diagram_get_ratio.png)
 
