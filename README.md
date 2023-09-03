@@ -50,9 +50,11 @@ To run the Stock Data Microservice, open a terminal, navigate to the appropriate
 python stock_data_microservice.py
 ```
 **UML Sequence Diagram:**
+
 ![Stock Data Microservice UML Sequence Diagram](documentation/stock_data_microservice.png)
 
 **UML Class Diagram:**
+
 ![Stock Data Microservice UML Class Diagram](documentation/uml_class_diagram_stock_data_microservice.png)
 
 ### Ratios Calculation Service (Created by my partner, Ryan)
@@ -65,9 +67,11 @@ To run the Ratios Calculation Service, open another terminal, navigate to the ap
 python get_ratios.py
 ```
 **UML Sequence Diagram:**
+
 ![Ratios Calculation Service UML Sequence Diagram](documentation/get_ratios.png)
 
 **UML Class Diagram:**
+
 ![Ratios Calculation UML Class Diagram](documentation/uml_class_diagram_get_ratio.png)
 
 
