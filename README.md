@@ -44,9 +44,10 @@ The Frontend will be accessible in your browser at `http://localhost:3000`.
 
 The Stock Data Microservice retrieves stock data for the selected stocks and date range. It communicates with external sources to fetch stock prices and related information. Make sure to run this service on localhost:8000.
 
-To run the Stock Data Microservice, open a terminal, navigate to the appropriate directory, and execute the following command:
+To run the Stock Data Microservice, open a terminal, navigate to the appropriate directory, and execute the following commands:
 
 ```bash
+pip install -r requirements.txt
 python stock_data_microservice.py
 ```
 **UML Sequence Diagram:**
