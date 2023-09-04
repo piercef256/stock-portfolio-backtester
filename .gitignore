@@ -37,3 +37,7 @@ app.py
 .gitignore
 app2.py
 encrypt.py
+
+# python
+get_ratios_microservice/venv
+stock_data_microservice/venv
