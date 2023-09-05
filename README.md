@@ -38,7 +38,7 @@ The Frontend of the Stock Portfolio Backtester is responsible for displaying the
    npm run start
    ```
 
-The Frontend will be accessible in your browser at `http://localhost:3000`.
+The Frontend will be accessible in your browser at `http://localhost:3002`.
 
 ### Stock Data Microservice
 
