@@ -7,15 +7,25 @@ services:
       - "3002:3002"
     depends_on:
       - stock_data_microservice
+    networks:
+      - my-network
 
   stock_data_microservice:
     build:
       context: ./stock_data_microservice
     ports:
       - "8000:8000"
+    networks:
+      - my-network
 
   get_ratios_microservice:
     build:
       context: ./get_ratios_microservice
     ports:
       - "5001:5001"
+    networks:
+      - my-network
+      
+networks:
+  my-network:
+    name: my-network
