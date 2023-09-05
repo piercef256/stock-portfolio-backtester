@@ -1,0 +1,21 @@
+version: '3'
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - stock_data_microservice
+
+  stock_data_microservice:
+    build:
+      context: ./stock_data_microservice
+    ports:
+      - "8000:8000"
+
+  get_ratios_microservice:
+    build:
+      context: ./get_ratios_microservice
+    ports:
+      - "5001:5001"
